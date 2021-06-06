@@ -7,7 +7,7 @@ from json_excel_converter.xlsx import Writer
 
 class BooksSpider(scrapy.Spider):
     name = 'books'
-    books_global = []
+    crawled_books = []
 
     def start_requests(self):
         start_id = getattr(self, 'start', None)
@@ -55,7 +55,7 @@ class BooksSpider(scrapy.Spider):
             'description': description,
             'image': image,
         }
-        self.books_global.append(book)
+        self.crawled_books.append(book)
 
     @classmethod
     def from_crawler(cls, crawler, *args, **kwargs):
@@ -64,7 +64,5 @@ class BooksSpider(scrapy.Spider):
         return spider
 
     def spider_closed(self, spider):
-        print('============')
-        print(len(self.books_global))
         conv = Converter()
-        conv.convert(self.books_global, Writer(file=f"../{self.start}~{self.end}.xlsx"))
+        conv.convert(self.crawled_books, Writer(file=f"../{self.start}~{self.end}.xlsx"))
